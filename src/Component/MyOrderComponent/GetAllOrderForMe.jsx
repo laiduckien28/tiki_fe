@@ -2,7 +2,7 @@ import { Col, Row} from 'antd'
 import React from 'react'
 import Header from '../HomePage/Header'
 import { useQuery } from '@tanstack/react-query';
-
+import { useNavigate } from 'react-router-dom';
 const GetAllOrderForMe = () => {
     const token = localStorage.getItem("access_token")
     const getallmyorders = async () => {
@@ -24,6 +24,8 @@ const GetAllOrderForMe = () => {
     console.log("data", data?.message)
     const myorderall = data?.message?.message
     console.log("myorderall", myorderall)
+    const Navigate = useNavigate()
+
   return (
     <div>
     <Header/>
@@ -57,7 +59,7 @@ const GetAllOrderForMe = () => {
 
                                 <div> 
                                 <p> {myorder?.orderItems[0].name}</p>
-                                <p> id: {myorder?.orderItems[0]._id}</p>
+                                <p> id: {myorder?._id}</p>
                                 </div>
                                 </Col>
 
@@ -65,10 +67,18 @@ const GetAllOrderForMe = () => {
                                 <Col span={8} className='pt-4'>
 
                                 <p> Đơn giá</p>
-                                <p className='font-bold text-blue-600 text-2xl'> {myorder?.itemprices}đ</p>
+                                <p className='font-bold text-blue-600 text-2xl'> {myorder?.itemprices.toLocaleString()}đ</p>
 
 
-                                <button> Tình trạng đơn hàng</button>
+                                <button className='
+                                
+                                   border border-red-500 bg-red-500 rounded-sm text-white p-2 cursor-pointer
+                                '
+                                onClick={() => {
+
+                                  Navigate(`/my-orders/${myorder?._id}`)
+                                }}
+                                > Chi tiết đơn hàng</button>
                                 </Col>
                                 </Row>
 
