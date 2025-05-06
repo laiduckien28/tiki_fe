@@ -10,7 +10,7 @@ const ProductAll = () => {
   const [ page, setpage ] = useState(1)
   const getAllProduct = async ({ queryKey }) => {
     const [_key, page] = queryKey;
-    const res = await fetch(`http://localhost:3001/api/product/getall?limit=${limit}&page=${page}`);
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/product/getall?limit=${limit}&page=${page}`);
     return res.json();
   };
   const { data, isLoading } = useQuery({

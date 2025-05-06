@@ -17,7 +17,7 @@ const NormalUser = () => {
     const id = decoded.id;
 
     const getdetailuser = async () => {
-        const result = await fetch(`http://localhost:3001/api/user/getuser/${id}`, {
+        const result = await fetch(`${import.meta.env.VITE_API_URL}/api/user/getuser/${id}`, {
             method: "GET",
             headers: {
                 token: `authorization ${token}`,
@@ -28,7 +28,7 @@ const NormalUser = () => {
 
     const mutation = useMutation({
         mutationFn: async (data) => {
-            const res = await axios.put(`http://localhost:3001/api/user/update-user/${id}`, data, {
+            const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/user/update-user/${id}`, data, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

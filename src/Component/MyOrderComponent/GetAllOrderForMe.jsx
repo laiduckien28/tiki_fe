@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const GetAllOrderForMe = () => {
     const token = localStorage.getItem("access_token")
     const getallmyorders = async () => {
-        const result = await fetch(`http://localhost:3001/api/order/get-details-order`, {
+        const result = await fetch(`${import.meta.env.VITE_API_URL}/api/order/get-details-order`, {
             method: "GET",
             headers: {
                 token: `token ${token}`,

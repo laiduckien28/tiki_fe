@@ -14,7 +14,7 @@ import axios from 'axios';
 const SignUpComponent = () => {
   const mutation = useMutation({
     mutationFn: (data) => {
-      const res =  axios.post('http://localhost:3001/api/user/signup', data , {
+      const res =  axios.post(`${import.meta.env.VITE_API_URL}/api/user/signup`, data , {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -42,23 +42,6 @@ const SignUpComponent = () => {
   const [ address, setaddress ] = useState('')
   const [ confirmpassword, setcfpassword ] = useState('')
 
-  // const data_gui_di = [{
-  //   username },
-  //   {
-  //     password,
-
-  //   }, {
-  //     email
-
-  //   }, {
-  //     phone
-
-  //   }, {
-  //     address
-
-  //   }
-  // ]
-  // console.log("data gui di: ", data_gui_di)
 
 
   const navigate = useNavigate()

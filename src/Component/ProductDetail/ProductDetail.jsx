@@ -17,7 +17,7 @@ const ProductDetail = () => {
   const { id } = useParams()
 
   const getDetailProduct = async () => {
-    const res = await fetch(`http://localhost:3001/api/product/get-details/${id}`);
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/product/get-details/${id}`);
     return res.json();
   };
   const { data } = useQuery({
@@ -46,7 +46,7 @@ const ProductDetail = () => {
 
   const mutation = useMutation({
     mutationFn: (data) => {
-      const res =  axios.post('http://localhost:3001/api/cart/create-cart', data , {
+      const res =  axios.post(`${import.meta.env.VITE_API_URL}/api/cart/create-cart`, data , {
         headers: {
           'Content-Type': 'application/json'
         }

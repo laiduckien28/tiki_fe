@@ -14,7 +14,8 @@ const SystemAdminUser = () => {
   const decoded = jwtDecode(token)
   console.log(decoded)
   const getalluser = async () => {
-    const result = await fetch(`http://localhost:3001/api/user/getall`, {
+    // console.log("import.meta.env.VITE_API_URL", import.meta.env.VITE_API_URL)
+    const result = await fetch(`${import.meta.env.VITE_API_URL}/api/user/getall`, {
         method: "GET",
         headers: {
             authorization: `Bearer ${token}`,
@@ -28,7 +29,7 @@ const { data } = useQuery({
   queryFn: getalluser,
 });
 const getallproduct = async () => {
-  const result = await fetch(`http://localhost:3001/api/product/getall`, {
+  const result = await fetch(`${import.meta.env.VITE_API_URL}/api/product/getall`, {
       method: "GET",
       headers: {
         "Content-Type": `application/json`,

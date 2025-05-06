@@ -34,7 +34,7 @@ const SignInComponent = () => {
 
   const mutation = useMutation({
     mutationFn: async (data) => {
-      const res =  await axios.post('http://localhost:3001/api/user/signin', data , {
+      const res =  await axios.post(`${import.meta.env.VITE_API_URL}/api/user/signin`, data , {
         headers: {
           'Content-Type': 'application/json'
         }

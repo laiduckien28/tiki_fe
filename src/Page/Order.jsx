@@ -16,7 +16,7 @@ const Order = () => {
     const increase = () => setQuantity(q => q + 1);
     const decrease = () => setQuantity(q => (q > 1 ? q - 1 : 1));
       const getDetailCart = async () => {
-        const result = await fetch(`http://localhost:3001/api/cart/get-only-cart-id/${id}`, {
+        const result = await fetch(`${import.meta.env.VITE_API_URL}/api/cart/get-only-cart-id/${id}`, {
             method: "GET"
         });
         return await result.json();
@@ -52,7 +52,7 @@ const Order = () => {
 
     const mutation = useMutation({
         mutationFn: async (data) => {
-            const res = await axios.post(`http://localhost:3001/api/order/create-order`, data, {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/order/create-order`, data, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -60,6 +60,13 @@ const Order = () => {
             return res.data;
         },
     });
+
+
+    if(mutation.isSuccess) {
+        setTimeout(() => {
+            Navigate('/my-orders')
+        }, 1000)
+    }
   return (
     <div>
       <Header/>

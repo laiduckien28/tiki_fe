@@ -19,7 +19,7 @@ const MyOrderComponent = () => {
 
   // Fetch đơn hàng từ API
   const getOnlyOrder = async () => {
-    const res = await fetch(`http://localhost:3001/api/order/get-only-order/${id}`);
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/order/get-only-order/${id}`);
     if (!res.ok) throw new Error('Không thể lấy đơn hàng');
     return res.json();
   };
@@ -37,7 +37,7 @@ const MyOrderComponent = () => {
   const mutation = useMutation({
     mutationFn: async () => {
       const res = await axios.put(
-        `http://localhost:3001/api/order/update-order/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/order/update-order/${id}`,
         {},
         { headers: { 'Content-Type': 'application/json' } }
       );

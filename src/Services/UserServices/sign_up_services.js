@@ -2,7 +2,7 @@ import axios from 'axios';
 export const sign_up_services = async(data) => {
 
   try { 
-    const res = await axios.post('http://localhost:3001/api/user/signup', data, {
+    const res = await axios.post('${import.meta.env.VITE_API_URL}/api/user/signup', data, {
       headers: {
         'Content-Type': 'application/json'
       }
