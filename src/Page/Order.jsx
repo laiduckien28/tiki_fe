@@ -70,9 +70,239 @@ const Order = () => {
   return (
     <div>
       <Header/>
-      <div className="my-8">
+
+      <div className='block sm:hidden'>      <div className="my-8">
         <Row>
+          <Col span={1}></Col>
+
+          <Col span={22}>
+          <div> 
+            <p className='font-bold text-blue-500 text-[13px] mb-2'> Giao Diện Thanh Toán</p>
+          </div>
+            
+
+              <div>  
+                                            <Row gutter={10} className='m-8'>
+                                            <Col span={2}> 
+                                            </Col>
+                        <Col span={20}>
+                          <div className="rounded-sm border border-white px-2 py-2 shadow-sm">
+                            <img
+                              src={array_all_carts?.orderItems[0]?.url}
+                              className="rounded-xl border border-white"
+                              alt="Product"
+                            />
+                          </div>
+                        </Col>
+                                           <Col span={2}> 
+                                            </Col>
+
+                      </Row> 
+              
+              </div>
+                            <div>  
+                                            <Row gutter={10} className='m-8'>
+                        <Col span={2}>
+
+                        </Col>
+                        <Col span={20}>
+                          <div className="text-[13px] font-semibold leading-6">
+                            {array_all_carts?.orderItems[0]?.name}
+                          </div>
+   
+                          <p className="text-red-600 font-bold text-[13px] mt-3">{array_all_carts?.orderItems[0]?.price.toLocaleString()}đ</p>
+                          <div className="mt-4">
+                            <p className="font-medium text-[13px]">Thông tin vận chuyển</p>
+
+                            <div className="mt-4 text-sm text-gray-600">
+                                <div className='flex gap-2 '> 
+                                <p> fullname</p>
+                                <Input placeholder="fullname" size='small'
+                                    onChange={(e) => {
+                                        setfullname(e.target.value)
+                                    }}
+                                />
+
+                                </div>
+
+                                <div className='flex gap-2 my-2'> 
+                                <p> address</p>
+                                <Input placeholder="address"      size='small'                               onChange={(e) => {
+                                        setaddress(e.target.value)
+                                    }}/>
+
+                                </div>
+
+                                <div className='flex gap-2 my-2'> 
+                                <p> city   </p>
+                                <Input placeholder="city"      size='small'                               onChange={(e) => {
+                                        setcity(e.target.value)
+                                    }}/>
+
+                                </div>
+
+
+                                <div className='flex gap-2 my-2'> 
+                                <p> country</p>
+                                <Input placeholder="country"        size='small'                             onChange={(e) => {
+                                        setcountry(e.target.value)
+                                    }}/>
+
+                                </div>
+
+
+                                <div className='flex gap-2 my-2'> 
+                                <p> phone</p>
+                                <Input placeholder="phone"            size='small'                         onChange={(e) => {
+                                        setphone(e.target.value)
+                                    }}/>
+
+                                </div>
+                            </div>
+                          </div>
+                        </Col>
+                        <Col span={5}>
+
+
+                        </Col>
+                      </Row> 
+              
+              </div>
+
+
+
+
+                                               <div>  
+                                            <Row gutter={10} className='m-8'>
+                        <Col span={2}>
+
+                        </Col>
+                        <Col span={20}>
+ 
+
+                <p className="font-medium mb-2 text-[13px] ">Số lượng</p>
+
+                <div className="flex items-center gap-2 mb-4">
+                  <button
+                    onClick={decrease}
+                    className="w-7 h-7 border rounded-sm text-sm flex items-center justify-center hover:bg-gray-100 p-1"
+                  >
+                    –
+                  </button>
+                  <div className="w-7 h-7 border rounded-sm flex items-center justify-center text-sm p-1">
+                    {quantity}
+                  </div>
+                  <button
+                    onClick={increase}
+                    className="w-7 h-7 border rounded-sm text-sm flex items-center justify-center hover:bg-gray-100 p-1"
+                  >
+                    +
+                  </button>
+                </div>
+
+                          <div className='flex gap-2 text-[13px] my-1'> 
+                            <p> Phí Giao Hàng: </p>
+                            <p> {shippingprice.toLocaleString()}đ </p>
+                          </div>
+
+                          <div className='flex gap-2 text-[13px]  my-1'> 
+                            <p> Thuế </p>
+                            <p> {taxPrice*100}%  </p>                           </div>
+
+                          <div > 
+                            <p className='text-[13px]  my-1'> Phương thức thanh toán </p>
+                            <div className='flex flex-col justify-between  my-1'> 
+                            <Checkbox style={{ fontSize:"12px"}}>Thanh Toán Khi Nhận Hàng</Checkbox>
+                            <Checkbox style={{ fontSize:"12px"}}>Thanh Toán Qua Ngân Hàng</Checkbox>
+                            </div>
+
+                          </div>
+
+                          <div>
+                            <p className="text-gray-600 text-[13px] font-bold my-2">Tạm tính</p>
+                            <p className="text-[13px] font-semibold text-red-600">{(array_all_carts?.orderItems[0]?.price * quantity + 10000000 + array_all_carts?.orderItems[0]?.price * quantity*0.2).toLocaleString()}₫</p>
+                          </div>
+                          <div className="flex gap-4 mt-4"> 
+                            <button className="border  border-red-500 bg-red-500 text-white rounded-sm  p-1 cursor-pointer text-[13px]"
+                               
+                            onClick={() => {
+                                mutation.mutate({
+                                    orderItems: [
+                                            {
+                                                name: array_all_carts?.orderItems[0]?.name, 
+                                                amount: array_all_carts?.orderItems[0]?.amount,
+                                                image: array_all_carts?.orderItems[0]?.url, 
+                                                price: array_all_carts?.orderItems[0]?.price,
+                                                product: array_all_carts?.orderItems[0]?.product
+                                            }
+                                        ],
+                                        paymentmethod: "Thanh Toán Khi Nhận Hàng",
+                                        shippingaddress: {
+                                            fullname: fullname,
+                                            address: address,
+                                            city: city,
+                                            country: country,
+                                            phone:phone
+                                        },
+                                        shippingprice: shippingprice,
+                                        taxPrice: taxPrice,
+                                        user: userid
+                            })
+                            }}
+
+                            > Đặt ngay </button>
+                          
+                          </div>
+                        </Col>
+                      </Row> 
+              
+              </div>   
+                  
+                  
+                
+
+                
+            
+
+          </Col>
+
           <Col span={2}></Col>
+        </Row>
+      </div>   </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div className='hidden sm:block'>       <div className="my-8">
+        <Row>
+          <Col span={1}></Col>
 
           <Col span={20}>
           <div> 
@@ -234,7 +464,9 @@ const Order = () => {
 
           <Col span={2}></Col>
         </Row>
-      </div>  
+      </div>  </div>
+
+
 
     </div>
   )

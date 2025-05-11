@@ -1,57 +1,103 @@
-import React, { useState } from 'react'
-import { Col, Row } from 'antd'
-import {
-  PlusSquareOutlined
-} from '@ant-design/icons'; 
-import { Space, Table, Tag } from 'antd';
+import React, { useState } from 'react';
+import { Col, Row, message } from 'antd';
+import { PlusSquareOutlined } from '@ant-design/icons';
+import { Space, Table } from 'antd';
 import { jwtDecode } from 'jwt-decode';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 const SystemAdminUser = () => {
-  const [ infouser, setinfouser] = useState(false);
-  const [ infoproduct, setinfoproduct] = useState(false);
-  const token = localStorage.getItem("access_token")
-  const decoded = jwtDecode(token)
-  console.log(decoded)
+  const [infouser, setinfouser] = useState(false);
+  const [infoproduct, setinfoproduct] = useState(false);
+  const token = localStorage.getItem("access_token");
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+
+
+  const decoded = jwtDecode(token);
+  console.log(decoded);
+
   const getalluser = async () => {
-    // console.log("import.meta.env.VITE_API_URL", import.meta.env.VITE_API_URL)
     const result = await fetch(`${import.meta.env.VITE_API_URL}/api/user/getall`, {
-        method: "GET",
-        headers: {
-            authorization: `Bearer ${token}`,
-        },
+      method: "GET",
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
     });
     return await result.json();
-};
+  };
 
-const { data } = useQuery({
-  queryKey: ["get_data_user_all"],
-  queryFn: getalluser,
-});
-const getallproduct = async () => {
-  const result = await fetch(`${import.meta.env.VITE_API_URL}/api/product/getall`, {
+  const mutation = useMutation({
+    mutationFn: async (id) => {
+      const res = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/user/delete-user/${id}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      message.success("Xóa người dùng thành công!");
+      queryClient.invalidateQueries(["get_data_user_all"]);
+    },
+    onError: (error) => {
+      message.error("Lỗi khi xóa người dùng: " + error.message);
+    }
+  });
+  const mutation_product = useMutation({
+    mutationFn: async (id) => {
+      const res = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/product/deleteproduct/${id}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      message.success("Xóa Sản phẩm thành công!");
+      queryClient.invalidateQueries(["get_data_product_all"]);
+    },
+    onError: (error) => {
+      message.error("Lỗi khi xóa sản phẩm: " + error.message);
+    }
+  });
+  const { data } = useQuery({
+    queryKey: ["get_data_user_all"],
+    queryFn: getalluser,
+  });
+
+  const getallproduct = async () => {
+    const result = await fetch(`${import.meta.env.VITE_API_URL}/api/product/getall`, {
       method: "GET",
       headers: {
         "Content-Type": `application/json`,
       },
+    });
+    return await result.json();
+  };
+
+  const { data: product_data } = useQuery({
+    queryKey: ["get_data_product_all"],
+    queryFn: getallproduct,
   });
-  return await result.json();
-};
-const navigate = useNavigate()
 
-const edit_user = (id) => {
-  navigate(`/system/admin/edit-user/${id}`)
-}
+  const edit_user = (id) => {
+    navigate(`/system/admin/edit-user/${id}`);
+  };
+  const edit_product = (id) => {
+    navigate(`/system/admin/edit-product/${id}`);
+  };
 
-
-const { data: product_data } = useQuery({
-queryKey: ["get_data_product_all"],
-queryFn: getallproduct,
-});
-const array_data = data?.message?.data;
-console.log("array_data", array_data)
-const product_array_data = product_data?.data?.message;
-console.log("product_data", product_array_data)
+  const array_data = data?.message?.data || [];
+  const product_array_data = product_data?.data?.message || [];
 
   const columns = [
     {
@@ -63,7 +109,6 @@ console.log("product_data", product_array_data)
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: text => <a>{text}</a>,
     },
     {
       title: 'Email',
@@ -84,36 +129,39 @@ console.log("product_data", product_array_data)
       title: 'Role',
       key: 'role',
       dataIndex: 'role'
-      
     },
     {
       title: 'Action',
       key: 'action',
       render: (text, record) => (
         <Space size="middle">
-          <a 
-            onClick={() => {
-              const id = record.key
-              edit_user(id)
-              // console.log("Full user data:", record); 
-            }}
-            className='cursor-pointer'
+          <span
+            onClick={() => edit_user(record.key)}
+            className="cursor-pointer text-blue-500"
           >
             Edit
-          </a>
-          <a>Delete</a>
+          </span>
+          <span
+            className="cursor-pointer text-red-500"
+            onClick={() => mutation.mutate(record.key)}
+          >
+            Delete
+          </span>
         </Space>
       ),
     }
-    
   ];
-  const columns_product = [
 
+  const columns_product = [
+    {
+      title: 'Id',
+      dataIndex: 'key',
+      key: 'key',
+    },
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: text => <a>{text}</a>,
     },
     {
       title: 'Description',
@@ -134,125 +182,199 @@ console.log("product_data", product_array_data)
       title: 'CountinStock',
       key: 'countinStock',
       dataIndex: 'countinStock'
-      
     },
     {
       title: 'Action',
       key: 'action',
-      render: () => (
+      render: (record) => (
         <Space size="middle">
-          <a >Edit </a>
-          <a>Delete</a>
+          <span className='cursor-pointer text-blue-500'
+          onClick={() => {
+              edit_product(record.key)
+          }}
+          >Edit</span>
+          <span className='cursor-pointer text-red-500'
+          onClick={() => mutation_product.mutate(record.key)}
+          >Delete</span>
         </Space>
       ),
     }
   ];
-  const data_demo = array_data?.map((user) => ({
+
+  const data_demo = array_data.map((user) => ({
     key: user._id,
     name: user.name,
     email: user.email,
     phone: user.phone,
     address: user.address,
     role: user.isadmin ? 'Admin' : 'User',
-  })) || [];
-  console.log("data_demo", data_demo)
+  }));
 
-
-  const product_data_demo = product_array_data?.map((product) => ({
+  const product_data_demo = product_array_data.map((product) => ({
     key: product._id,
     name: product.name,
     description: product.description,
     type: product.type,
     price: product.price,
     countinStock: product.countinStock,
-  })) || [];
+  }));
 
   return (
     <div>
-                  <Row>
-                <Col span={2}></Col>
-                <Col span={20} className=''>
-                    <Row className='mt-10'>
+          <div className='block sm:hidden'>       <Row>
+        <Col span={1}></Col>
+        <Col span={22}>
+          <Row className='mt-10'>
+            <Col span={4}>
+              <div className='border border-white rounded-sm shadow-xl bg-blue-500 h-140 px-1 py-1 gap-1 text-[13px]'>
+                <p className='font-bold text-white'>Thông Tin Quản Trị</p>
 
-                        <Col span={2} ></Col>
-                        <Col span={5} className='' >
+                
+                <button
+                  className='border border-white bg-white rounded-sm  cursor-pointer mt-5 text-[10px]'
+                  onClick={() => {
+                    setinfouser(true);
+                    setinfoproduct(false);
+                  }}
+                >
+                  Thông tin người dùng
+                </button>
+                <button
+                  className='border border-white bg-white rounded-sm  cursor-pointer mt-3 text-[10px]'
+                  onClick={() => {10
+                    setinfouser(false);
+                    setinfoproduct(true);
+                  }}
+                >
+                  Thông tin sản phẩm
+                </button>
 
-                            <div className='border border-white rounded-sm shadow-xl bg-blue-500 h-140 px-4 py-4'> 
-                                  <div>    <p className='font-bold text-white'>  Thông Tin Quản Trị </p></div>
-                                  <div> 
-                                        <button className='mt-4 border border-white bg-white rounded-sm px-2 py-1 cursor-pointer'
-                                        onClick={() => {
-                                          setinfouser(true) 
-                                          setinfoproduct(false)
-                                        }}
-                                        >  Thông tin người dùng   </button>
-                                  </div>
-                                  <div> 
-                                  <button className='mt-4 border border-white bg-white rounded-sm px-2 py-1 cursor-pointer'
-                                                                          onClick={() => {
-                                          setinfouser(false) 
-                                          setinfoproduct(true)
-                                        }}
-                                  >  Thông tin  sản phẩm    </button>
-                                  </div>
-                            </div>
+                </div>
+ 
+            </Col>
+            <Col span={20}>
+              <div className='border border-white rounded-sm shadow-xl bg-gray-200 h-140 px-4 py-4 w-250 '>
+                {infouser && (
+                  <div>
+                    <div className='flex gap-1 cursor-pointer'>
+                      <PlusSquareOutlined style={{ fontSize: '25px', color: '#08c' }}                        onClick={() => {
+                        navigate('/system-admin/add-user/')
+                      }}/>
+                      <p className='text-[12px]'
+                      onClick={() => {
+                        navigate('/system-admin/add-user/')
+                      }}
+                      >Thêm người dùng</p>
+                    </div>
+                    <p className='mt-4 mb-4 text-[12px]'>Danh sách các user</p>
+                    <Table columns={columns} dataSource={data_demo} pagination={{ pageSize:  5}} style={{ fontSize: '10px'}}/>
+                  </div>
+                )}
+                {infoproduct && (
+                  <div>
+                    <div className='flex gap-1'>
+                      <PlusSquareOutlined className='cursor-pointer'
+                                            onClick={() => {
+                        navigate('/system-admin/add-product/')
+                      }}
+                      style={{ fontSize: '25px', color: '#08c' }}   
 
-                        </Col>
-                        <Col span={15} className='' >
-                        <div className='border border-white rounded-sm shadow-xl bg-gray-200 h-140 px-4 py-4 w-220 ml-5'> 
-                              {
-                                infouser && ( 
-                                  <div> 
-                        
-                        <div className='flex gap-1 cursor-pointer'> 
-                              <PlusSquareOutlined style={{ fontSize: '50px', color: '#08c' }}/>
-                              <p  > Thêm người dùng</p>
-                              </div>
+                      />
+                      <p            className='cursor-pointer text-[12px]'           onClick={() => {
+                        navigate('/system-admin/add-product/')
+                      }}>Thêm sản phẩm</p>
+                    </div>
+                    <p className='mt-4 mb-4 text-[12px]'>Danh sách các sản phẩm</p>
+                    <Table columns={columns_product} dataSource={product_data_demo} pagination={{ pageSize: 3 }} size='small'/>
+                  </div>
+                )}
+              </div>
+            </Col>
+          </Row>
+        </Col>
+        <Col span={2}></Col>
+      </Row></div>
+                <div className='hidden sm:block'>       <Row>
+        <Col span={2}></Col>
+        <Col span={20}>
+          <Row className='mt-10'>
+            <Col span={2}></Col>
+            <Col span={5}>
+              <div className='border border-white rounded-sm shadow-xl bg-blue-500 h-140 px-4 py-4 gap-5'>
+                <p className='font-bold text-white'>Thông Tin Quản Trị</p>
 
-                              <div> 
-                                   <p className='mt-4'> Danh sách các user</p>
-                                   <div className='mt-4'> 
-                                   
-                                             
-                                   <Table columns={columns} dataSource={data_demo} pagination={{ pageSize: 5 }} />
-                                   </div>
-                              </div>
-                        
-                        </div>
-                                ) 
-                              }
+                <div className='gap=5 flex'> 
+                
+                <button
+                  className='m-4 border border-white bg-white rounded-sm px-2 py-1 cursor-pointer'
+                  onClick={() => {
+                    setinfouser(true);
+                    setinfoproduct(false);
+                  }}
+                >
+                  Thông tin người dùng
+                </button>
+                <button
+                  className='m-4 border border-white bg-white rounded-sm px-2 py-1 cursor-pointer'
+                  onClick={() => {10
+                    setinfouser(false);
+                    setinfoproduct(true);
+                  }}
+                >
+                  Thông tin sản phẩm
+                </button>
 
-                              {
-                                infoproduct && ( 
-                                  <div> 
-                        
-                        <div className='flex gap-1 '> 
-                              <PlusSquareOutlined style={{ fontSize: '50px', color: '#08c' }}/>
-                              <p> Thêm sản phẩm</p>
-                              </div>
+                </div>
+ 
+              </div>
+            </Col>
+            <Col span={15}>
+              <div className='border border-white rounded-sm shadow-xl bg-gray-200 h-140 px-4 py-4 w-250 ml-5'>
+                {infouser && (
+                  <div>
+                    <div className='flex gap-1 cursor-pointer'>
+                      <PlusSquareOutlined style={{ fontSize: '50px', color: '#08c' }}                        onClick={() => {
+                        navigate('/system-admin/add-user/')
+                      }}/>
+                      <p
+                      onClick={() => {
+                        navigate('/system-admin/add-user/')
+                      }}
+                      >Thêm người dùng</p>
+                    </div>
+                    <p className='mt-4'>Danh sách các user</p>
+                    <Table columns={columns} dataSource={data_demo} pagination={{ pageSize:  5}} />
+                  </div>
+                )}
+                {infoproduct && (
+                  <div>
+                    <div className='flex gap-1'>
+                      <PlusSquareOutlined className='cursor-pointer'
+                                            onClick={() => {
+                        navigate('/system-admin/add-product/')
+                      }}
+                      style={{ fontSize: '50px', color: '#08c' }
+                      
+                      } 
 
-                              <div> 
-                                   <p className='mt-4'> Danh sách các sản phẩm</p>
-                                   <div className='mt-4'> 
-                                   
-                                             
-                                   <Table columns={columns_product} dataSource={product_data_demo} pagination={{ pageSize: 3 } } />
-                                   </div>
-                              </div>
-                        
-                        </div>
-                                ) 
-                              }
+                      />
+                      <p            className='cursor-pointer'           onClick={() => {
+                        navigate('/system-admin/add-product/')
+                      }}>Thêm sản phẩm</p>
+                    </div>
+                    <p className='mt-4'>Danh sách các sản phẩm</p>
+                    <Table columns={columns_product} dataSource={product_data_demo} pagination={{ pageSize: 3 }} />
+                  </div>
+                )}
+              </div>
+            </Col>
+            <Col span={2}></Col>
+          </Row>
+        </Col>
+        <Col span={2}></Col>
+      </Row></div>
+    </div>
+  );
+};
 
-                        </div>
-                        </Col>
-                        <Col span={2}></Col>
-                    </Row>
-                </Col>
-                <Col span={2}></Col>
-            </Row>
-    </div>   
-  )
-}
-
-export default SystemAdminUser
+export default SystemAdminUser;

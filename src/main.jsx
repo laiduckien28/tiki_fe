@@ -17,6 +17,9 @@ import Carts from './Page/Carts.jsx';
 import Order from './Page/Order.jsx';
 import MyOrder from './Page/MyOrder.jsx';
 import GetAllOrderForMe from './Component/MyOrderComponent/GetAllOrderForMe.jsx';
+import AddUserForAdmin from './Component/SignInComponent/AddUserForAdmin.jsx';
+import EditProduct from './Page/EditProduct.jsx';
+import AddProduct from './Page/AddProduct.jsx';
 const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
@@ -51,6 +54,11 @@ const router = createBrowserRouter([
   }
   , 
   {
+    path: '/system/admin/edit-product/:id',
+    element: <EditProduct/>
+  }
+  , 
+  {
     path: '/carts',
     element: <Carts/>
   }
@@ -66,6 +74,14 @@ const router = createBrowserRouter([
   {
     path: '/my-orders',
     element: <GetAllOrderForMe/>
+  }, 
+  {
+    path: '/system-admin/add-user/',
+    element: <AddUserForAdmin/>
+  },
+  {
+    path: '/system-admin/add-product/',
+    element: <AddProduct/>
   }
 
 

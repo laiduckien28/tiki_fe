@@ -8,33 +8,36 @@ import { LoadingOutlined } from "@ant-design/icons";
 import Header from "../Component/HomePage/Header";
 import { Checkbox } from "antd";
 
-const EditUser = () => {
+const EditProduct = () => {
   const navigate = useNavigate();
 
   const { id } = useParams();
   console.log(id);
   const token = localStorage.getItem("access_token");
-  const getdetailuser = async () => {
+  const getdetailproduct = async () => {
     const result = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/user/getuser/${id}`,
+      `${import.meta.env.VITE_API_URL}/api/product/get-details/${id}`,
       {
         method: "GET",
+        
         headers: {
-          token: `authorization ${token}`,
+          "Content-Type": "application/json"
         },
       },
     );
     return await result.json();
   };
 
+  
+
   const mutation = useMutation({
     mutationFn: async (data) => {
       const res = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/user/update-user/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/product/update-product/${id}`,
         data,
         {
           headers: {
-            "Content-Type": "application/json",
+            authorization: `authorization ${token}`
           },
         },
       );
@@ -52,35 +55,33 @@ const EditUser = () => {
   }, [mutation.isSuccess]);
 
   const { data, error } = useQuery({
-    queryKey: ["get_data_user_detail", id],
-    queryFn: getdetailuser,
+    queryKey: ["get_data_product_detail", id],
+    queryFn: getdetailproduct,
   });
+  console.log("results", data?.data?.message);
 
-  const [username, setusername] = useState("");
-  const [email, setemail] = useState("");
-  const [sdt, setsdt] = useState("");
-  const [address, setaddress] = useState("");
-  const [password, setpassword] = useState("");
-  const [role, setrole] = useState(false);
+  const [name, setname] = useState("");
+  const [url, seturl] = useState("");
+  const [type, settype] = useState("");
+  const [countinStock, setcountinStock] = useState("");
+  const [price, setprice] = useState("");
+  const [description, setdescription] = useState("");
 
-//   const [stateadmin, setstateadmin] = useState(false);
-//   const [stateuser, setstateuser] = useState(false);
+
   useEffect(() => {
-    if (data?.message?.data?.[0]) {
-      const user = data.message.data[0];
-      setusername(user.name || "");
-      setemail(user.email || "");
-      setsdt(user.phone || "");
-      setaddress(user.address || "");
-      setpassword(user.password || "");
-      setrole(user.isadmin)
+    if (data?.data?.message) {
+      const product = data?.data?.message;
+      setname(product.name || "");
+      seturl(product.image || "");
+      setcountinStock(product.countinStock || "");
+      setdescription(product.description || "");
+      setprice(product.price || "");
+      settype(product.type || "");
+
     }
   }, [data]);
 
-  console.log("role", role);
 
-  if (error)
-    return <Alert message="Không thể lấy thông tin người dùng" type="error" />;
 
   return (
     <div>
@@ -119,67 +120,50 @@ const EditUser = () => {
                   className="mb-4"
                 />
               )}
-              <div className="rounded border border-gray-300 p-4 shadow-2xl">
+              <div className="rounded border border-gray-300 p-4 shadow-2xl w-250">
                 <p className="text-2xl font-bold text-blue-700">
-                  Chỉnh sửa thông tin userr
+                  Chỉnh sửa thông tin sản phẩm
                 </p>
                 <div className="flex-col">
                   <div className="m-2 flex">
-                    <p className="flex-1/3">Họ & Tên</p>
+                    <p className="flex-1/3">Tên sản phẩm</p>
                     <Input
-                      value={username}
-                      onChange={(e) => setusername(e.target.value)}
+                      value={name}
+                      onChange={(e) => setname(e.target.value)}
                     />
                   </div>
                   <div className="m-2 flex">
-                    <p className="flex-1/3">Email</p>
+                    <p className="flex-1/3">Url</p>
                     <Input
-                      value={email}
-                      onChange={(e) => setemail(e.target.value)}
+                      value={url}
+                      onChange={(e) => seturl(e.target.value)}
                     />
                   </div>
                   <div className="m-2 flex">
-                    <p className="flex-1/3">Số điện thoại</p>
+                    <p className="flex-1/3">Loại sản phẩmphẩm</p>
                     <Input
-                      value={sdt}
-                      onChange={(e) => setsdt(e.target.value)}
+                      value={type}
+                      onChange={(e) => settype(e.target.value)}
                     />
                   </div>
                   <div className="m-2 flex">
-                    <p className="flex-1/3">Địa chỉ</p>
+                    <p className="flex-1/3">Giá</p>
                     <Input
-                      value={address}
-                      onChange={(e) => setaddress(e.target.value)}
+                      value={price}
+                      onChange={(e) => setprice(e.target.value)}
                     />
                   </div>
 
                   <div className="m-2 flex">
-                    <p className="flex-1/3"> Mật khẩu</p>
-                    <Input onChange={(e) => setpassword(e.target.value)} />
+                    <p className="flex-1/3"> Số hàng còn lại trong </p>
+                    <Input value={countinStock}
+                    onChange={(e) => setcountinStock(e.target.value)} />
                   </div>
                   <div className="m-2 flex">
-                    <p className="flex-1/3"> Role</p>
-                    <div className="flex-1/3">
-                      <Checkbox 
-                            checked={ role == true}
-
-                            onChange={(e) => {
-                                setrole(e.target.checked)
-                            }}                        
-                      >
-                        Admin
-                      </Checkbox>
-                    </div>
-                    <div className="flex-1/3">
-                      <Checkbox 
-                      checked={ role == false}
-                                                  onChange={(e) => {
-                                                    setrole(!e.target.checked)
-                            }}
-                      >
-                        User
-                      </Checkbox>
-                    </div>
+                    <p className="flex-1/3"> Mô tả </p>
+                    <Input onChange={(e) => setdescription(e.target.value)} 
+                        value={description}
+                    />
                   </div>
 
                   <div>
@@ -187,12 +171,13 @@ const EditUser = () => {
                       className="cursor-pointer rounded-sm border border-blue-600 bg-blue-600 p-1 text-white"
                       onClick={() => {
                         mutation.mutate({
-                          name: username,
-                          email: email,
-                          phone: sdt,
-                          address: address,
-                          password: password,
-                          isadmin: role,
+                          name: name,
+                          type: type,
+                          price: price,
+                          image: url,
+                          description: description,
+                          countinStock: countinStock,
+
                         });
                       }}
                     >
@@ -211,4 +196,4 @@ const EditUser = () => {
   );
 };
 
-export default EditUser;
+export default EditProduct;

@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { Alert } from 'antd';
-import LocaleProvider from 'antd/es/locale';
 
 const SignInComponent = () => {
   const navigate = useNavigate()

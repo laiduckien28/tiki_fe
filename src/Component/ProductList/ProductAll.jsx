@@ -20,7 +20,9 @@ const ProductAll = () => {
   });
 
 
-console.log("data", data)
+console.log("data", data?.data?.totalproduct)
+const totalpage = data?.data?.totalproduct || 50;
+
 const navigate = useNavigate()
 // console.log("Get-All-Product", data.data.message)
 const array_all_product = data?.data?.message
@@ -31,8 +33,58 @@ const product_detail_id = (id) => {
   
   return (
     <div > 
-    
-        <Row>
+
+    <div className='block sm:hidden'>               <Row>
+        {/* <Spin indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} /> */}
+
+        <Col span={1}></Col>
+        <Col span={21} className=' border-white border-4 rounded-lg mt-5 inset-shadow-2xs bg-gray-100
+'>      
+        <div className='font-bold px-2 mt-1 text-[10px] text-black'> Gợi ý hôm nay </div>
+        {
+          isLoading &&         <Spin indicator={<LoadingOutlined style={{ fontSize: 48 }} spin 
+
+className='ml-150'
+/>} />
+        }
+
+
+
+        <div  className='grid grid-cols-2 gap-1'>
+
+        {
+  array_all_product?.map((product) => (
+      <div className='bg-white px-2 border-solid rounded ml-2 mr-2 mt-2 shadow-xl  relative'> 
+        <img src={product.image} alt={product.name} 
+
+          onClick={() => {
+            console.log("id_product", product._id)
+            product_detail_id(product._id)
+          }} className='cursor-pointer rounded-sm pt-4 max-h-full '
+        />
+        <div className='py-1 ' > 
+          <p className='text-[12px]'>{product.name}</p>
+          <p className='font-bold py-1 text-red-600 text-[11px]'>{product.price.toLocaleString()}đ</p>
+          <p className='text-[10px]'>Made in Japan</p>
+        </div>
+    </div>
+  ))
+}
+        </div>
+        <div className='my-5 flex justify-center'> 
+        <Pagination defaultCurrent={1} pageSize={8} total={totalpage} size={"small"}
+                onChange={(current) => {
+                  setpage(current), 
+                  console.log("current", current) 
+                }} className='gap-2'
+                
+        />
+        </div>
+        </Col>
+        <Col span={2}></Col>
+        </Row>
+</div>
+        <div className='hidden sm:block'>               <Row>
         {/* <Spin indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} /> */}
 
         <Col span={6}></Col>
@@ -62,7 +114,7 @@ className='ml-150'
         />
         <div className='py-2'> 
           <p>{product.name}</p>
-          <p className='font-bold py-1 text-red-600'>{product.price}</p>
+          <p className='font-bold py-1 text-red-600'>{product.price.toLocaleString()}đ</p>
           <p>Made in Japan</p>
         </div>
     </div>
@@ -70,7 +122,7 @@ className='ml-150'
 }
         </div>
         <div className='my-5 flex justify-center'> 
-        <Pagination defaultCurrent={1} total={50} pageSize={8} 
+        <Pagination defaultCurrent={1} pageSize={8} total={totalpage}
                 onChange={(current) => {
                   setpage(current), 
                   console.log("current", current)
@@ -81,6 +133,9 @@ className='ml-150'
         </Col>
         <Col span={2}></Col>
         </Row>
+</div>
+
+
     
     </div>
 

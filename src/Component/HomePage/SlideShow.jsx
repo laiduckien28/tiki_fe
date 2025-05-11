@@ -24,14 +24,14 @@ const SlideShow = () => {
 
   return (
     <div className="my-5">
+<div className="block sm:hidden py-2 "> 
       <Row>
-        <Col span={2}></Col>
-        <Col span={4}></Col>
+        <Col span={1}></Col>
 
-        <Col span={16}>
+        <Col span={21}>
           <Slider {...settings}>
             {images.map((image) => (
-              <div key={image.id} className="px-2 box-border">
+              <div key={image.id} className="px-2 box-border rounded-sm">
                 <img
                   src={image.url}
                   alt={`slide-${image.id}`}
@@ -42,6 +42,31 @@ const SlideShow = () => {
         </Col>
         <Col span={2}></Col>
       </Row>
+</div>
+
+<div className="hidden sm:block py-2 "> 
+
+      <Row>
+        <Col span={2}></Col>
+        <Col span={4}></Col>
+
+        <Col span={16}>
+          <Slider {...settings}>
+            {images.map((image) => (
+              <div key={image.id} className="px-2 box-border rounded-sm">
+                <img
+                  src={image.url}
+                  alt={`slide-${image.id}`}
+                />
+              </div>
+            ))}
+          </Slider>
+        </Col>
+        <Col span={2}></Col>
+      </Row>
+</div>
+
+
     </div>
   );
 };

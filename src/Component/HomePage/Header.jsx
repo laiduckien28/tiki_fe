@@ -7,13 +7,13 @@ import {
   UserOutlined
 } from '@ant-design/icons';
 import { jwtDecode } from "jwt-decode";
+import MenuDivider from 'antd/es/menu/MenuDivider';
 
 const { Search } = Input;
 const Header = () => {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Đóng dropdown khi click ra ngoài
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -37,9 +37,7 @@ const Header = () => {
   const order = () => {
     navigate('/my-orders')
   }
-  // const home = () => {
-  //   navigate('/')
-  // }
+
   let decoded = ''
   try {
     const token  = localStorage.getItem("access_token")
@@ -53,6 +51,8 @@ const Header = () => {
 
   const delete_accesstoken = () => {
     localStorage.removeItem("access_token")
+    
+  
   }
 
   const is_admin = decoded.isAdmin;
@@ -62,46 +62,30 @@ const Header = () => {
 
 
   return (
-    <div className='border-b border-b-gray-50 mt-2 shadow-sm'>
-      <Row>
-        <Col span={2}></Col>
+    <div className='border-b border-b-gray-50 mt-2 shadow-sm' >
 
-        <Col span={4}>
-          <div className='flex flex-col items-center space-x-2 cursor-pointer'
-          onClick={() => {
-            home()
-          }}>
-            <img className='h-15' src='../../public/LogoTiKi.png' alt='logo' />
-            <p className='font-bold text-blue-700'>Tốt & Nhanh</p>
-          </div>
-        </Col>
+        {/* Mobile */}
+        <div className="block sm:hidden py-2 ">
+      <Row justify={'center'} align={'middle'}>
+        <Col span={1}></Col>
 
-        <Col span={10}>
+        <Col span={8} className=''>
           <Search
-            placeholder="100% hàng thật"
             allowClear
-            enterButton="Tìm Kiếm"
-            size="medium"
+            size="small" style={{ width:'120px'}}
           />
-          <div className='flex gap-2 mt-2 text-gray-400'>
-            <p>điện gia dụng</p>
-            <p>xe cộ</p>
-            <p>khỏe đẹp</p>
-            <p>nhà cửa</p>
-          </div>
+
         </Col>
 
-        <Col span={8}>
-          <div className='flex gap-5 ml-10 text-[15px] items-center relative'>
-            {/* Trang chủ */}
-            <div className='flex gap-2'>
+        <Col span={14} className='ml-2'>
+          <div className='flex text-[10px] items-center relative ml-1'>
+            <div className='flex gap-1 sm:gap-2  '>
               <HomeOutlined />
-              <p className='cursor-pointer' onClick={() => {
+              <p className='cursor-pointer text-[10px] ' onClick={() => {
                   home()
               }}>Trang chủ</p>
             </div>
 
-            {/* Tài khoản có dropdown */}
             <div className='relative' ref={dropdownRef}>
             <div
                 onClick={() => {
@@ -111,10 +95,132 @@ const Header = () => {
                     setOpen(!open);
                   }
                 }}
-                className='flex gap-2 cursor-pointer items-center'
+                className='flex  gap-1  cursor-pointer items-center ml-1'
               >
                 <UserOutlined />
-                <p>Tài Khoản</p>
+                <p  className='text-[10px]' > Tài Khoản</p>
+
+
+              </div>
+
+              <div> 
+              {open && (
+                <div className="absolute right-0 mt-2 w-30 bg-white rounded-lg shadow-lg z-50">
+                  <ul className="py-1 text-[10px] text-gray-700">
+                    <li>
+                      <a href="/userinfo" className="block px-4 py-1 hover:bg-gray-100">
+                        Thông tin tài khoản
+                      </a>
+                    </li>
+                    <li>
+                      <a href="" className="block px-4 py-1 text-red-600 hover:bg-gray-100"
+                      onClick={() => {
+                        delete_accesstoken()
+                        navigate('/signin')
+                      }}
+                      >
+                        Đăng xuất
+                      </a>
+                    </li>
+
+                    <li>
+                      <a href="" className="block px-4 py-1 text-red-600 hover:bg-gray-100"
+                      onClick={() => {
+                        order()
+                      }}
+                      >
+                        Đơn hàng của tôi
+                      </a>
+                    </li>
+
+                    {
+                      decoded?.isAdmin && ( 
+                        <li>
+                      <a  className="block px-4 py-1 text-red-600 hover:bg-gray-100"
+                      onClick={() => {
+                        systemadmin()
+                      }}
+                      >
+                        Quản trị
+                      </a>
+                    </li>
+                      )
+                    }
+                  </ul>
+                </div>
+              )}
+              </div>
+
+
+            </div>
+
+            <div className='flex gap-1 sm:gap-2  ml-1'>
+              <ShoppingCartOutlined />
+              <p className='cursor-pointer text-[10px]'
+              onClick={() => {
+                navigate('/carts')
+              }}>Giỏ Hàng</p>
+            </div>
+          </div>
+        </Col>
+
+        <Col span={1}></Col>
+      </Row>
+        </div>
+
+
+
+        {/* PC */}
+        <div className="hidden sm:block">
+
+
+              <Row justify={'center'} align={'middle'}>
+        <Col span={2}></Col>
+
+        <Col span={4} className='borde'>
+          <div className='cursor-pointer mt-1 mr-1'
+          onClick={() => {
+            home()
+          }}>
+            <img className='scale-60' src='../../public/LogoTiKi.png' alt='logo' />
+          </div>
+        </Col>
+
+        <Col span={9} className=''>
+          <Search
+            allowClear
+            size="medium" enterButton="Tìm Kiếm" style={{width:"100%"}}
+          />
+          {/* <div className='flex mt-1 text-gray-400 xl:text-[15px] text-[10px] xl:font-bold xl:gap-3'>
+            <p>điện gia dụng</p>
+            <p>xe cộ</p>
+            <p>khỏe đẹp</p>
+            <p>nhà cửa</p>
+          </div> */}
+        </Col>
+
+        <Col span={7}>
+          <div className='flex items-center relative ml-10 align-middle'>
+            <div className='flex gap-2 align-middle'>
+              <HomeOutlined />
+              <p className='cursor-pointer text-[15px] ' onClick={() => {
+                  home()
+              }}>Trang chủ</p>
+            </div>
+
+            <div className='relative' ref={dropdownRef}>
+            <div
+                onClick={() => {
+                  if (!decoded.id) {
+                    route_signup();
+                  } else {
+                    setOpen(!open);
+                  }
+                }}
+                className='flex  gap-2 cursor-pointer items-center ml-2'
+              >
+                <UserOutlined />
+                <p  className='text-[15px]' > Tài Khoản</p>
 
 
               </div>
@@ -132,6 +238,7 @@ const Header = () => {
                       <a href="" className="block px-4 py-2 text-red-600 hover:bg-gray-100"
                       onClick={() => {
                         delete_accesstoken()
+                        navigate('/signin')
                       }}
                       >
                         Đăng xuất
@@ -169,10 +276,9 @@ const Header = () => {
 
             </div>
 
-            {/* Giỏ hàng */}
-            <div className='flex gap-2'>
+            <div className='flex gap-2  ml-2'>
               <ShoppingCartOutlined />
-              <p className='cursor-pointer'
+              <p className='cursor-pointer text-[15px]'
               onClick={() => {
                 navigate('/carts')
               }}>Giỏ Hàng</p>
@@ -182,6 +288,9 @@ const Header = () => {
 
         <Col span={2}></Col>
       </Row>
+        </div>
+
+
     </div>
   );
 };
