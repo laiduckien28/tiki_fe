@@ -68,7 +68,7 @@ className='ml-150'
 
           onClick={() => {
             console.log("id_product", product._id)
-                        if( token == null ) {
+                        if( token != null ) {
                 product_detail_id(product._id)
             } 
             
@@ -126,7 +126,7 @@ className='ml-150'
 
           onClick={() => {
             console.log("id_product", product._id)
-                        if( token == null ) {
+                        if( token!= null ) {
                 product_detail_id(product._id)
             } 
             
