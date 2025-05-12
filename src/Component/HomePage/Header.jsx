@@ -190,7 +190,7 @@ const Header = () => {
           onClick={() => {
             home()
           }}>
-            <img className='scale-60' src='../../public/LogoTiKi.png' alt='logo' />
+            <img className='scale-60' src='https://salt.tikicdn.com/ts/upload/0e/07/78/ee828743c9afa9792cf20d75995e134e.png' alt='logo' />
           </div>
         </Col>
 
