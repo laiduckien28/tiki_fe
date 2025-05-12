@@ -7,7 +7,7 @@ import {
   UserOutlined
 } from '@ant-design/icons';
 import { jwtDecode } from "jwt-decode";
-import MenuDivider from 'antd/es/menu/MenuDivider';
+
 
 const { Search } = Input;
 const Header = () => {
@@ -58,8 +58,16 @@ const Header = () => {
   const is_admin = decoded.isAdmin;
   
   console.log("is_admin", is_admin)
- 
+  const [ search, setsearch] = useState('')
 
+
+
+
+  const result_page = (items) => {
+    navigate(`/result_page/${items}`)
+  }
+    
+  
 
   return (
     <div className='border-b border-b-gray-50 mt-2 shadow-sm' >
@@ -190,6 +198,14 @@ const Header = () => {
           <Search
             allowClear
             size="medium" enterButton="Tìm Kiếm" style={{width:"100%"}}
+            onChange={(e) => {
+                setsearch(e.target.value)
+                
+            }}
+
+            onPressEnter={() => {
+              result_page(search)
+            }}
           />
           {/* <div className='flex mt-1 text-gray-400 xl:text-[15px] text-[10px] xl:font-bold xl:gap-3'>
             <p>điện gia dụng</p>

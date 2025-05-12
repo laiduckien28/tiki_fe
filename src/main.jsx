@@ -20,6 +20,8 @@ import GetAllOrderForMe from './Component/MyOrderComponent/GetAllOrderForMe.jsx'
 import AddUserForAdmin from './Component/SignInComponent/AddUserForAdmin.jsx';
 import EditProduct from './Page/EditProduct.jsx';
 import AddProduct from './Page/AddProduct.jsx';
+import { Result } from 'antd';
+import ResultPage from './Component/ProductList/ResultPage.jsx';
 const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
@@ -82,6 +84,10 @@ const router = createBrowserRouter([
   {
     path: '/system-admin/add-product/',
     element: <AddProduct/>
+  }, 
+  {
+    path: '/result_page/:id',
+    element: <ResultPage />
   }
 
 
