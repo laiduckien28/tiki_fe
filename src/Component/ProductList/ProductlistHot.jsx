@@ -19,6 +19,7 @@ const ProductlistHot = () => {
     keepPreviousData: true, 
   });
 
+const token = localStorage.getItem("access_token");
 
 console.log("data", data?.data?.totalproduct)
 const totalpage = data?.data?.totalproduct || 50;
@@ -62,7 +63,13 @@ className='ml-150'
 
           onClick={() => {
             console.log("id_product", product._id)
-            product_detail_id(product._id)
+                        if( token == null ) {
+                product_detail_id(product._id)
+            } 
+            
+            else {
+              navigate('/signin')
+            }
           }} className='cursor-pointer rounded-sm pt-4 max-h-full '
         />
         <div className='py-1 ' > 
@@ -115,7 +122,13 @@ className='ml-150'
 
           onClick={() => {
             console.log("id_product", product._id)
-            product_detail_id(product._id)
+                        if( token == null ) {
+                product_detail_id(product._id)
+            } 
+            
+            else {
+              navigate('/signin')
+            }
           }} className='cursor-pointer rounded-sm pt-4'
         />
         <div className='py-2'> 
