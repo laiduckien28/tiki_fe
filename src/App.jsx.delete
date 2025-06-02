@@ -1,0 +1,15 @@
+import About from './Page/About'
+import HomePage from './Page/HomePage'
+
+function App() {
+
+  return (
+      <div>
+      <HomePage />
+      {/* <ProductPage/> */}
+      <About />
+      </div>
+  )
+}
+
+export default App
